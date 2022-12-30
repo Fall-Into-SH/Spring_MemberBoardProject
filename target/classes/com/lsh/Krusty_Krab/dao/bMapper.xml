@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 게시판 -->
+<mapper namespace="Board">
+
+	<!-- 게시글 등록 -->
+	<insert id="boWrite" parameterType="board">
+		INSERT INTO BOARD
+		VALUES(Bo_SEQ.NEXTVAL, #{boMode}, ${boMode}_SEQ.NEXTVAL, #{boWriter},
+		#{boTitle},
+		#{boContent}, SYSDATE,
+		0, #{boFileName})
+	</insert>
+
+	<!-- 게시글 생성시 게시판 글갯수 업데이트 -->
+	<update id="boAdminCount" parameterType="String">
+		UPDATE BOARDMODE SET
+		BOCOUNT = BOCOUNT
+		+
+		1 WHERE BOMODE = #{boMode}
+	</update>
+
+
+	<!-- 페이징 처리 -->
+	<select id="boList" parameterType="paging" resultType="board">
+		SELECT *
+		FROM BOARDLIST WHERE RN BETWEEN #{startRow} AND #{endRow} AND BOMODE =
+		#{boMode}
+	</select>
+	<!-- 페이징 처리 전체 게시글 -->
+	<select id="boListAll" parameterType="paging" resultType="board">
+		SELECT
+		*
+		FROM BOARDLIST WHERE RN BETWEEN #{startRow} AND #{endRow}
+	</select>
+
+	<!-- 게시글 상세보기 -->
+	<select id="boView" parameterType="int" resultType="board">
+		SELECT * FROM
+		BOARD WHERE BONUM = #{boNum}
+	</select>
+
+	<!-- 게시글 Hit -->
+	<update id="boHit" parameterType="int">
+		UPDATE BOARD SET BOHIT = BOHIT
+		+
+		1 WHERE BONUM = #{boNum}
+	</update>
+
+	<!-- 게시글 수정 -->
+	<update id="boModify" parameterType="board">
+		UPDATE BOARD SET
+		BOTITLE=#{boTitle}, BOCONTENT=#{boContent},
+		BOFILENAME=#{boFileName,
+		jdbcType=VARCHAR}, BOMODE=#{boMode}, BOMNUM=${boMode}_SEQ.NEXTVAL
+		WHERE BONUM=#{boNum}
+	</update>
+
+	<!-- 서버 이미지 삭제하기 위한 이름 구하기 -->
+	<select id="boDleteImg" parameterType="int" resultType="String">
+		SELECT
+		BOFILENAME FROM BOARD WHERE BONUM = #{boNum}
+	</select>
+
+	<!-- 게시글 삭제 -->
+	<delete id="boDelete" parameterType="int">
+		DELETE FROM BOARD WHERE
+		BONUM
+		= #{boNum}
+	</delete>
+
+	<!-- 게시물 삭제시 게시글 글갯수 업데이트 -->
+	<update id="boDeleteModeCount" parameterType="String">
+		UPDATE BOARDMODE
+		SET
+		BOCOUNT = BOCOUNT
+		-
+		1 WHERE BOMODE = #{boMode}
+	</update>
+
+	<!-- 게시글 갯수 확인 -->
+	<select id="boCount" resultType="int">
+		SELECT COUNT(*) FROM BOARD
+	</select>
+
+	<!-- 게시글 검색 -->
+	<select id="boSearch" parameterType="search" resultType="board">
+		SELECT *
+		FROM BOARDLIST WHERE ${category} LIKE '%'||#{keyword}||'%' AND RN
+		BETWEEN #{startRow} AND #{endRow}
+	</select>
+
+	<!-- 게시판 갯수 -->
+	<select id="boAdminCount2" resultType="int">
+		SELECT COUNT(*) FROM
+		BOARDMODE
+	</select>
+
+	<!-- 게시판 목록 -->
+	<select id="boAdminList" parameterType="paging"
+		resultType="boardAdmin">
+		SELECT *
+		FROM BOARDMODELIST WHERE RN BETWEEN #{startRow} AND
+		#{endRow}
+	</select>
+
+	<!-- 상단바에 게시판 목록 불러오기 -->
+	<select id="boNavList" resultType="boardAdmin">
+		SELECT BOMODE
+		FROM BOARDMODE
+	</select>
+
+	<!-- 게시판 이름 중복 체크 -->
+	<select id="boardNameOverlap" parameterType="String"
+		resultType="String">
+		SELECT
+		BOMODE FROM BOARDMODE WHERE BOMODE = #{boMode}
+	</select>
+
+	<!-- 게시판 생성 -->
+	<insert id="boardCreate" parameterType="boardAdmin">
+		INSERT INTO BOARDMODE
+		VALUES(#{boMode}, 0)
+	</insert>
+
+	<!-- 생성되는 게시판 시퀀스 생성 boardSEQ -->
+	<select id="boardSEQ" parameterType="boardAdmin"
+		resultType="String">
+		${seq}
+	</select>
+
+	<!-- 검색한 회원 수 확인 -->
+	<select id="boSearchCount" resultType="int">
+		SELECT COUNT(*) FROM BOARD
+		WHERE ${category} LIKE '%'||#{keyword}||'%'
+	</select>
+
+	<!-- 게시판 삭제시 시퀀스 삭제 -->
+	<select id="boardDeleteSEQ" parameterType="boardAdmin"
+		resultType="String">
+		${seq}
+	</select>
+
+	<!-- 게시판 삭제시 게시글 삭제 -->
+	<delete id="boardDeletePost" parameterType="String">
+		DELETE FROM BOARD
+		WHERE
+		BOMODE
+		= #{boMode}
+	</delete>
+
+	<!-- 게시판 삭제 -->
+	<delete id="boardDeleteMode" parameterType="String">
+		DELETE FROM BOARDMODE
+		WHERE
+		BOMODE
+		= #{boMode}
+	</delete>
+
+	<!-- 게시글 삭제시 댓글 삭제 -->
+	<delete id="boCmtDelete" parameterType="int">
+		DELETE FROM COMMENTS
+		WHERE CBNUM = #{boNum}
+	</delete>
+
+	<!-- 동영상 등록 -->
+	<insert id="boVideo" parameterType="board">
+		INSERT INTO BOVIDEO
+		VALUES(VIDEO_SEQ.NEXTVAL,
+		#{boTitle}, #{boUrl},
+		#{boFileName})
+	</insert>
+
+	<!-- 비디오 갯수 체크 -->
+	<select id="boVideoCount" resultType="int">
+		SELECT COUNT(*) FROM
+		BOVIDEO
+	</select>
+
+	<!-- 비디오 보여주는 리스트 -->
+	<select id="boVideoList" parameterType="paging" resultType="boardVideo">
+		SELECT *
+		FROM VIDEOLIST WHERE RN BETWEEN #{startRow} AND #{endRow}
+	</select>
+</mapper>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 댓글 -->
+<mapper namespace="Comment">
+	<!-- 해당 게시글의 댓글 검색 -->
+	<select id="cList" parameterType="int" resultType="comment">
+		SELECT * FROM COMMENTS WHERE CBNUM = #{cbNum}
+	</select>
+
+	<!-- 댓글 작성 -->
+	<insert id="cmtWrite" parameterType="comment">
+		INSERT INTO COMMENTS VALUES(CMT_SEQ.NEXTVAL, #{cbNum}, #{cmtWriter},
+		#{cmtContent}, SYSDATE)
+	</insert>
+
+	<!-- 댓글 삭제 -->
+	<delete id="cmtDelte" parameterType="comment">
+		DELETE FROM COMMENTS WHERE CBNUM = #{cbNum} AND CMTNUM = #{cmtNum}
+	</delete>
+	
+	<!-- 댓글 수정 -->
+	<update id="cmtModify" parameterType="comment">
+		UPDATE COMMENTS SET CMTCONTENT = #{cmtContent}
+		WHERE CBNUM = #{cbNum} AND CMTNUM = #{cmtNum}
+	</update>
+</mapper>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 회원가입 -->
+<mapper namespace="Member">
+
+	<!-- 아이디 중복체크 -->
+	<select id="checkId" parameterType="String" resultType="String">
+		SELECT
+		MEMID FROM MEMBER WHERE MEMID = #{memId}
+	</select>
+	<!-- 회원가입 -->
+	<insert id="mJoin" parameterType="member">
+		INSERT INTO MEMBER
+		VALUES(#{memId}, #{memPw}, #{memName}, #{memBirth},
+		#{memGender},
+		#{memEmail}, #{memPhone}, #{memAddr}, #{memProfileName}, 'user')
+	</insert>
+	
+	<!-- 로그인 -->
+	<select id="mLogin" parameterType="member" resultType="String">
+		SELECT
+		MEMPW FROM MEMBER WHERE MEMID = #{memId}
+	</select>
+	
+	<!-- 권한확인 -->
+	<select id="mMode" parameterType="member" resultType="String">
+		SELECT
+		MEMMODE FROM MEMBER WHERE MEMID = #{memId}
+	</select>
+	
+	<!-- 회원 수 확인 -->
+	<select id="mCount" resultType="int">
+		SELECT COUNT(*) FROM MEMBER
+	</select>
+
+	<!-- 페이징 처리한 회원목록-->
+	<select id="mList" parameterType="paging" resultType="member">
+		SELECT *
+		FROM MEMBERLIST WHERE RN BETWEEN #{startRow} AND #{endRow}
+	</select>
+
+	<!-- 회원상세보기 -->
+	<select id="mView" parameterType="String" resultType="member"> 
+	SELECT * FROM MEMBER WHERE MEMID = #{memId} 
+	</select>
+	
+	<!-- 검색한 회원 수 확인 -->
+	<select id="mSearchCount" resultType="int">
+		SELECT COUNT(*) FROM MEMBER WHERE ${category} LIKE '%'||#{keyword}||'%'
+	</select>
+	
+	<!-- 회원정보 검색 -->
+<select id="mSearch" parameterType="search" resultType="member">
+SELECT * FROM MEMBERLIST  WHERE ${category} LIKE '%'||#{keyword}||'%' AND RN BETWEEN #{startRow} AND #{endRow}
+</select>
+	
+	<!-- 
+		'%'||#{keyword}||'%'  => '%입력한값%'
+	 -->
+	
+	
+	<!-- 회원정보 수정 -->
+	<update id="mModify" parameterType="member">
+		UPDATE MEMBER SET MEMPW=#{memPw},
+		MEMNAME=#{memName}, MEMGENDER=#{memGender}, MEMBIRTH=#{memBirth}, MEMPHONE=#{memPhone}, MEMADDR=#{memAddr},
+		MEMPROFILENAME=#{memProfileName, jdbcType=VARCHAR}
+		WHERE MEMID=#{memId}
+	</update>
+	
+	<!-- 회원삭제시 사진 정보 -->
+	<select id="mDelteImg" parameterType="String" resultType="String">
+		SELECT MEMPROFILENAME FROM MEMBER WHERE MEMID = #{memId}
+	</select>
+	
+	<!-- 회원삭제 -->
+	<delete id="mDelete" parameterType="String">
+		DELETE FROM MEMBER WHERE MEMID = #{memId}
+	</delete>
+	
+	
+</mapper>

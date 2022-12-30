@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+	<typeAliases>
+		<typeAlias type="com.lsh.Krusty_Krab.dto.MEMBER"
+			alias="member" />
+		<typeAlias type="com.lsh.Krusty_Krab.dto.BOARD" alias="board" />
+		<typeAlias type="com.lsh.Krusty_Krab.dto.PAGE" alias="paging" />
+		<typeAlias type="com.lsh.Krusty_Krab.dto.SEARCH" alias="search" />
+		<typeAlias type="com.lsh.Krusty_Krab.dto.COMMENT" alias="comment" />
+		<typeAlias type="com.lsh.Krusty_Krab.dto.BOARDADMIN" alias="boardAdmin" />
+		<typeAlias type="com.lsh.Krusty_Krab.dto.BOARDVIDEO" alias="boardVideo" />
+	</typeAliases>
+
+</configuration>
